@@ -29,6 +29,8 @@ plugins {
   id("org.cadixdev.licenser") version "0.6.1" apply false
 }
 
+defaultTasks("build", "checkLicenses", "test", "jar")
+
 allprojects {
   group = "dev.derklaro"
   version = "1.0.0-SNAPSHOT"
