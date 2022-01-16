@@ -1,0 +1,37 @@
+metadata.format.version = "1.1"
+
+[versions]
+
+# general
+lombok = "1.18.22"
+
+# json mappers
+gson = "2.8.9"
+
+# http
+httpClient5 = "5.1.2"
+
+# testing
+junit = "5.8.2"
+
+
+[libraries]
+
+# compile time processing
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+
+# json mappers
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+
+# http
+httpClient5 = { group = "org.apache.httpcomponents.client5", name = "httpclient5", version.ref = "httpClient5" }
+
+# junit
+junitApi = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }
+junitParams = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit" }
+junitEngine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit" }
+
+
+[bundles]
+
+junit = ["junitApi", "junitParams", "junitEngine"]
