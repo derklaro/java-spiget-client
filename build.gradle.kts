@@ -34,7 +34,7 @@ defaultTasks("build", "checkLicenses", "test", "jar")
 
 allprojects {
   group = "dev.derklaro.spiget"
-  version = "1.0.0-SNAPSHOT"
+  version = "1.1.0-SNAPSHOT"
 
   repositories {
     mavenCentral()
@@ -107,6 +107,7 @@ subprojects {
         pom {
           name.set(project.name)
           url.set("https://github.com/derklaro/java-spiget-client")
+          description.set("A java library to interact with the spiget.org api")
 
           licenses {
             license {
