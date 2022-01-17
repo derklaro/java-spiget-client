@@ -49,6 +49,19 @@ The library has 5 main components, 3 are required to run it:
 - `mapper-gson`: contains a json mapper based on gson to en- / decode data
 - `tests`: contains all tests, no use for a user
 
+### External dependencies
+
+Please note that no component shadows any dependency by default. Your library is required to define the following dependencies
+if you use the given component:
+
+| Component        | Required dependencies                               |
+|------------------|-----------------------------------------------------|
+| core             | no dependencies required                            |
+| http-java8       | no dependencies required                            |
+| http-java11      | no dependencies required                            |
+| http-httpclient5 | `org.apache.httpcomponents.client5:httpclient5:5.+` |
+| mapper-gson      | `com.google.code.gson:gson:2.+`                     |
+
 ### How to send a request
 
 Choose one of the http components and a json mapper component (currently there is only a gson mapper available, but you
