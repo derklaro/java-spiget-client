@@ -9,7 +9,7 @@ lombok = "1.18.22"
 gson = "2.8.9"
 
 # http
-httpClient5 = "5.1.2"
+httpClient5 = "5.1.3"
 
 # testing
 junit = "5.8.2"
