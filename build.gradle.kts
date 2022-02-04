@@ -26,7 +26,7 @@ import org.cadixdev.gradle.licenser.LicenseExtension
 
 plugins {
   id("org.cadixdev.licenser") version "0.6.1"
-  id("com.github.ben-manes.versions") version "0.41.0"
+  id("com.github.ben-manes.versions") version "0.42.0"
   id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
 }
 
