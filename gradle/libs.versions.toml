@@ -3,7 +3,7 @@ metadata.format.version = "1.1"
 [versions]
 
 # general
-lombok = "1.18.22"
+lombok = "1.18.24"
 
 # json mappers
 gson = "2.9.0"
