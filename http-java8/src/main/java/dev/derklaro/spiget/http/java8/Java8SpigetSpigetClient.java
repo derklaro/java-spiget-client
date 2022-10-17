@@ -24,7 +24,7 @@
 
 package dev.derklaro.spiget.http.java8;
 
-import dev.derklaro.spiget.JsonMapper;
+import dev.derklaro.spiget.SpigetClientConfig;
 import dev.derklaro.spiget.client.AbstractSpigetClient;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,8 +38,8 @@ import lombok.NonNull;
 
 public class Java8SpigetSpigetClient extends AbstractSpigetClient {
 
-  public Java8SpigetSpigetClient(@NonNull JsonMapper mapper) {
-    super(mapper);
+  public Java8SpigetSpigetClient(@NonNull SpigetClientConfig clientConfig) {
+    super(clientConfig);
   }
 
   @Override
@@ -61,11 +61,11 @@ public class Java8SpigetSpigetClient extends AbstractSpigetClient {
         // request method
         connection.setRequestMethod(requestMethod);
         // timeouts
-        connection.setReadTimeout(30000);
-        connection.setConnectTimeout(15000);
+        connection.setReadTimeout((int) this.clientConfig.requestTimeout().toMillis());
+        connection.setConnectTimeout((int) this.clientConfig.connectTimeout().toMillis());
         // request properties
         connection.setRequestProperty("content-type", contentType);
-        connection.setRequestProperty("User-Agent", "spiget-java-client");
+        connection.setRequestProperty("User-Agent", this.clientConfig.userAgent());
         // connect and send the body if present
         connection.connect();
         if (body != null) {

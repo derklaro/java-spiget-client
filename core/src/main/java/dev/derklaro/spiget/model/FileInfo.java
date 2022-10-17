@@ -31,11 +31,11 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class FileInfo {
 
-  private final String fileType;
+  private String fileType;
 
-  private final double size;
-  private final String sizeUnit;
+  private double size;
+  private String sizeUnit;
 
-  private final String url;
-  private final String externalUrl;
+  private String url;
+  private String externalUrl;
 }

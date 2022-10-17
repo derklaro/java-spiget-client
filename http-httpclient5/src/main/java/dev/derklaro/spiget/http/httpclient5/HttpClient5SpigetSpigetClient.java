@@ -24,7 +24,7 @@
 
 package dev.derklaro.spiget.http.httpclient5;
 
-import dev.derklaro.spiget.JsonMapper;
+import dev.derklaro.spiget.SpigetClientConfig;
 import dev.derklaro.spiget.client.AbstractSpigetClient;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,17 +44,22 @@ import org.apache.hc.core5.util.Timeout;
 
 public class HttpClient5SpigetSpigetClient extends AbstractSpigetClient {
 
-  private final CloseableHttpClient client = HttpClients.custom()
-    .setDefaultRequestConfig(RequestConfig.custom()
-      .setRedirectsEnabled(true)
-      .setConnectTimeout(Timeout.ofSeconds(15))
-      .setResponseTimeout(Timeout.ofSeconds(30))
-      .build())
-    .disableConnectionState()
-    .build();
+  private final CloseableHttpClient client;
 
-  public HttpClient5SpigetSpigetClient(@NonNull JsonMapper mapper) {
-    super(mapper);
+  public HttpClient5SpigetSpigetClient(@NonNull SpigetClientConfig clientConfig) {
+    super(clientConfig);
+    this.client = createClient(clientConfig);
+  }
+
+  private static @NonNull CloseableHttpClient createClient(@NonNull SpigetClientConfig clientConfig) {
+    return HttpClients.custom()
+      .setDefaultRequestConfig(RequestConfig.custom()
+        .setRedirectsEnabled(true)
+        .setConnectTimeout(Timeout.ofMilliseconds(clientConfig.connectTimeout().toMillis()))
+        .setResponseTimeout(Timeout.ofMilliseconds(clientConfig.requestTimeout().toMillis()))
+        .build())
+      .disableConnectionState()
+      .build();
   }
 
   @Override
@@ -67,7 +72,7 @@ public class HttpClient5SpigetSpigetClient extends AbstractSpigetClient {
     ClassicHttpRequest request = new BasicClassicHttpRequest(requestMethod, URI.create(uri));
     // headers
     request.addHeader("Content-Type", contentType);
-    request.addHeader("User-Agent", "spiget-java-client");
+    request.addHeader("User-Agent", this.clientConfig.userAgent());
     // body
     if (body != null) {
       request.setEntity(new StringEntity(body, ContentType.parse(contentType)));

@@ -24,9 +24,9 @@
 
 package dev.derklaro.spiget.client;
 
-import dev.derklaro.spiget.JsonMapper;
 import dev.derklaro.spiget.Request;
 import dev.derklaro.spiget.SpigetClient;
+import dev.derklaro.spiget.SpigetClientConfig;
 import dev.derklaro.spiget.annotation.ExcludeQuery;
 import dev.derklaro.spiget.annotation.RequestData;
 import dev.derklaro.spiget.annotation.SerializedName;
@@ -49,9 +49,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public abstract class AbstractSpigetClient implements SpigetClient {
 
   public static final String BASE_URL = "https://api.spiget.org/v2/";
@@ -60,8 +58,12 @@ public abstract class AbstractSpigetClient implements SpigetClient {
   private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
   private static final MethodType GENERIC_FIELD_GETTER_TYPE = MethodType.methodType(Object.class, Object.class);
 
-  private final JsonMapper mapper;
+  protected final SpigetClientConfig clientConfig;
   private final Map<Class<?>, RequestInfo> cachedInformation = new ConcurrentHashMap<>();
+
+  protected AbstractSpigetClient(@NonNull SpigetClientConfig clientConfig) {
+    this.clientConfig = clientConfig;
+  }
 
   @Override
   public @NonNull <T> CompletableFuture<T> sendRequest(@NonNull Request<T> request, @NonNull Object... uriParams) {
@@ -71,7 +73,7 @@ public abstract class AbstractSpigetClient implements SpigetClient {
       info.formatUri(request, uriParams),
       info.contentType(),
       info.requestMethod()
-    ).thenApply(stream -> this.mapper.decode(stream, info.responseType()));
+    ).thenApply(stream -> this.clientConfig.jsonMapper().decode(stream, info.responseType()));
   }
 
   @Override
@@ -81,11 +83,11 @@ public abstract class AbstractSpigetClient implements SpigetClient {
   ) {
     RequestInfo info = this.getOrCreateInfo(request);
     return this.doSendRequest(
-      this.mapper.encode(request),
+      this.clientConfig.jsonMapper().encode(request),
       info.formatUri(request, uriParams),
       info.contentType(),
       info.requestMethod()
-    ).thenApply(stream -> this.mapper.decode(stream, info.responseType()));
+    ).thenApply(stream -> this.clientConfig.jsonMapper().decode(stream, info.responseType()));
   }
 
   @Override

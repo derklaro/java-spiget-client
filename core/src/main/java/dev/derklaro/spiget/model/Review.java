@@ -31,19 +31,19 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class Review {
 
-  private final AuthorId author;
-  private final Rating rating;
+  private AuthorId author;
+  private Rating rating;
 
-  private final String message;
-  private final String responseMessage;
+  private String message;
+  private String responseMessage;
 
-  private final String version;
-  private final long date;
+  private String version;
+  private long date;
 
   @Data
   @Accessors(fluent = true)
   public static final class AuthorId {
 
-    private final int id;
+    private int id;
   }
 }

@@ -31,7 +31,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class WebhookStatus {
 
-  private final String id;
-  private final int status;
-  private final int failedConnections;
+  private String id;
+  private int status;
+  private int failedConnections;
 }

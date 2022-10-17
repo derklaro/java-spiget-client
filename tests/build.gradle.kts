@@ -28,10 +28,12 @@ dependencies {
   "testImplementation"(projects.httpHttpclient5)
 
   "testImplementation"(projects.mapperGson)
+  "testImplementation"(projects.mapperJackson)
 
   "testImplementation"(libs.gson)
   "testImplementation"(libs.httpClient5)
   "testImplementation"(libs.bundles.junit)
+  "testImplementation"(libs.jacksonDatabind)
 }
 
 tasks.withType<JavaCompile> {

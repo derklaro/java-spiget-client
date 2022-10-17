@@ -31,7 +31,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class Rating {
 
-  private final int count;
-  private final float average;
+  private int count;
+  private float average;
 }
 

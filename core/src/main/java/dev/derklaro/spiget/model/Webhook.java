@@ -31,6 +31,6 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class Webhook {
 
-  private final String id;
-  private final String secret;
+  private String id;
+  private String secret;
 }

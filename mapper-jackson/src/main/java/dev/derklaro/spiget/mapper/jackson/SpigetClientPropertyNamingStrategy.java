@@ -22,18 +22,29 @@
  * THE SOFTWARE.
  */
 
-package dev.derklaro.spiget.model;
+package dev.derklaro.spiget.mapper.jackson;
 
-import java.util.Map;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.introspect.AnnotatedField;
+import dev.derklaro.spiget.annotation.SerializedName;
+import lombok.NonNull;
 
-@Data
-@Accessors(fluent = true)
-public final class Author {
+final class SpigetClientPropertyNamingStrategy extends PropertyNamingStrategy {
 
-  private int id;
-  private String name;
-  private Icon icon;
-  private Map<String, String> identities;
+  public static final SpigetClientPropertyNamingStrategy INSTANCE = new SpigetClientPropertyNamingStrategy();
+
+  private SpigetClientPropertyNamingStrategy() {
+  }
+
+  @Override
+  public @NonNull String nameForField(
+    @NonNull MapperConfig<?> config,
+    @NonNull AnnotatedField field,
+    @NonNull String defaultName
+  ) {
+    // check for our annotation
+    SerializedName serializedNameData = field.getAnnotation(SerializedName.class);
+    return serializedNameData == null ? defaultName : serializedNameData.value();
+  }
 }

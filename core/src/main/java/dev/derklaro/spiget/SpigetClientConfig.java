@@ -22,18 +22,21 @@
  * THE SOFTWARE.
  */
 
-package dev.derklaro.spiget.model;
+package dev.derklaro.spiget;
 
-import java.util.Map;
+import java.time.Duration;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.experimental.Accessors;
 
-@Data
-@Accessors(fluent = true)
-public final class Author {
+@NonNull
+@Data(staticConstructor = "create")
+@Accessors(fluent = true, chain = true)
+public final class SpigetClientConfig {
 
-  private int id;
-  private String name;
-  private Icon icon;
-  private Map<String, String> identities;
+  private final JsonMapper jsonMapper;
+
+  private String userAgent = "derklaro/java-spiget-client";
+  private Duration requestTimeout = Duration.ofSeconds(25);
+  private Duration connectTimeout = Duration.ofSeconds(10);
 }

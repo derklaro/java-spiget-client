@@ -34,78 +34,78 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class Resource {
 
-  private final int id;
-  private final String name;
+  private int id;
+  private String name;
 
-  private final String tag;
-  private final String contributors;
+  private String tag;
+  private String contributors;
 
-  private final int likes;
-  private final FileInfo file;
+  private int likes;
+  private FileInfo file;
 
-  private final Set<String> testedVersions;
-  private final Map<String, String> links;
+  private Set<String> testedVersions;
+  private Map<String, String> links;
 
-  private final Rating rating;
-  private final AuthorId author;
-  private final CategoryId category;
+  private Rating rating;
+  private AuthorId author;
+  private CategoryId category;
 
-  private final long releaseDate;
-  private final long updatedDate;
-  private final int downloads;
+  private long releaseDate;
+  private long updatedDate;
+  private int downloads;
 
-  private final boolean external;
-  private final Icon icon;
+  private boolean external;
+  private Icon icon;
 
-  private final boolean premium;
-  private final int price;
-  private final String currency;
+  private boolean premium;
+  private int price;
+  private String currency;
 
-  private final String sourceCodeLink;
-  private final String donationLink;
+  private String sourceCodeLink;
+  private String donationLink;
 
-  private final int existenceStatus;
-  private final String supportedLanguages;
+  private int existenceStatus;
+  private String supportedLanguages;
 
-  private final Version version;
-  private final Set<Version> versions;
+  private Version version;
+  private Set<Version> versions;
 
-  private final Set<UpdateId> updates;
-  private final Set<ReviewId> reviews;
+  private Set<UpdateId> updates;
+  private Set<ReviewId> reviews;
 
   @Data
   @Accessors(fluent = true)
   public static final class Version {
 
-    private final int id;
-    private final UUID uuid;
+    private int id;
+    private UUID uuid;
   }
 
   @Data
   @Accessors(fluent = true)
   public static final class UpdateId {
 
-    private final int id;
+    private int id;
   }
 
   @Data
   @Accessors(fluent = true)
   public static final class ReviewId {
 
-    private final int id;
+    private int id;
   }
 
   @Data
   @Accessors(fluent = true)
   public static final class AuthorId {
 
-    private final int id;
+    private int id;
   }
 
   @Data
   @Accessors(fluent = true)
   public static final class CategoryId {
 
-    private final int id;
+    private int id;
   }
 }

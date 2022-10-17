@@ -32,16 +32,16 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class VersionResourceList {
 
-  private final Set<String> check;
-  private final String method;
-  private final Set<Match> match;
+  private Set<String> check;
+  private String method;
+  private Set<Match> match;
 
   @Data
   @Accessors(fluent = true)
   public static final class Match {
 
-    private final int id;
-    private final String name;
-    private final Set<String> testedVersions;
+    private int id;
+    private String name;
+    private Set<String> testedVersions;
   }
 }

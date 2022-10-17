@@ -24,27 +24,31 @@
 
 package dev.derklaro.spiget.http.java11;
 
-import dev.derklaro.spiget.JsonMapper;
+import dev.derklaro.spiget.SpigetClientConfig;
 import dev.derklaro.spiget.client.AbstractSpigetClient;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import lombok.NonNull;
 
 public class Java11SpigetSpigetClient extends AbstractSpigetClient {
 
-  private final HttpClient client = HttpClient.newBuilder()
-    .version(HttpClient.Version.HTTP_2)
-    .connectTimeout(Duration.ofSeconds(15))
-    .followRedirects(HttpClient.Redirect.NORMAL)
-    .build();
+  private final HttpClient client;
 
-  public Java11SpigetSpigetClient(@NonNull JsonMapper mapper) {
-    super(mapper);
+  public Java11SpigetSpigetClient(@NonNull SpigetClientConfig clientConfig) {
+    super(clientConfig);
+    this.client = createClient(clientConfig);
+  }
+
+  private static @NonNull HttpClient createClient(@NonNull SpigetClientConfig clientConfig) {
+    return HttpClient.newBuilder()
+      .version(HttpClient.Version.HTTP_2)
+      .connectTimeout(clientConfig.connectTimeout())
+      .followRedirects(HttpClient.Redirect.NORMAL)
+      .build();
   }
 
   @Override
@@ -56,9 +60,9 @@ public class Java11SpigetSpigetClient extends AbstractSpigetClient {
   ) {
     return this.client.sendAsync(
       HttpRequest.newBuilder(URI.create(uri))
-        .timeout(Duration.ofSeconds(30))
+        .timeout(this.clientConfig.requestTimeout())
         .header("Content-Type", contentType)
-        .header("User-Agent", "spiget-java-client")
+        .header("User-Agent", this.clientConfig.userAgent())
         .method(
           requestMethod,
           body != null ? HttpRequest.BodyPublishers.ofString(body) : HttpRequest.BodyPublishers.noBody())

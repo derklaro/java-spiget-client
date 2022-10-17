@@ -37,8 +37,8 @@ public final class Status {
 
   // hide this wrapper as it's stupid
   @Getter(AccessLevel.NONE)
-  private final Wrapper status;
-  private final Stats stats;
+  private Wrapper status;
+  private Stats stats;
 
   public @NonNull Server server() {
     return this.status.server();
@@ -48,28 +48,28 @@ public final class Status {
   @Accessors(fluent = true)
   private static final class Wrapper {
 
-    private final Server server;
+    private Server server;
   }
 
   @Data
   @Accessors(fluent = true)
   public static final class Server {
 
-    private final String name;
-    private final String mode;
+    private String name;
+    private String mode;
   }
 
   @Data
   @Accessors(fluent = true)
   public static final class Stats {
 
-    private final int resources;
-    private final int authors;
-    private final int categories;
-    private final int reviews;
+    private int resources;
+    private int authors;
+    private int categories;
+    private int reviews;
     @SerializedName("resource_updates")
-    private final int resourceUpdates;
+    private int resourceUpdates;
     @SerializedName("resource_versions")
-    private final int resourceVersions;
+    private int resourceVersions;
   }
 }

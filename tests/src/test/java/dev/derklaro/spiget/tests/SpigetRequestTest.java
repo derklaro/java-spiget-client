@@ -25,11 +25,13 @@
 package dev.derklaro.spiget.tests;
 
 import dev.derklaro.spiget.SpigetClient;
+import dev.derklaro.spiget.SpigetClientConfig;
 import dev.derklaro.spiget.data.Sort;
 import dev.derklaro.spiget.http.httpclient5.HttpClient5SpigetSpigetClient;
 import dev.derklaro.spiget.http.java11.Java11SpigetSpigetClient;
 import dev.derklaro.spiget.http.java8.Java8SpigetSpigetClient;
 import dev.derklaro.spiget.mapper.gson.GsonMapper;
+import dev.derklaro.spiget.mapper.jackson.JacksonMapper;
 import dev.derklaro.spiget.request.author.AuthorDetails;
 import dev.derklaro.spiget.request.author.AuthorList;
 import dev.derklaro.spiget.request.author.AuthorResources;
@@ -75,9 +77,10 @@ final class SpigetRequestTest {
 
   static Stream<Arguments> clients() {
     return Stream.of(
-      Arguments.of(new Java8SpigetSpigetClient(GsonMapper.INSTANCE)),
-      Arguments.of(new Java11SpigetSpigetClient(GsonMapper.INSTANCE)),
-      Arguments.of(new HttpClient5SpigetSpigetClient(GsonMapper.INSTANCE)));
+      Arguments.of(new Java8SpigetSpigetClient(SpigetClientConfig.create(GsonMapper.INSTANCE))),
+      Arguments.of(new Java11SpigetSpigetClient(SpigetClientConfig.create(GsonMapper.INSTANCE))),
+      Arguments.of(new Java11SpigetSpigetClient(SpigetClientConfig.create(JacksonMapper.INSTANCE))),
+      Arguments.of(new HttpClient5SpigetSpigetClient(SpigetClientConfig.create(JacksonMapper.INSTANCE))));
   }
 
   @ParameterizedTest
@@ -150,8 +153,9 @@ final class SpigetRequestTest {
     var result = CategoryList.create(client).size(5).exec().join();
     Assertions.assertEquals(5, result.size());
 
-    var first = result.iterator().next();
-    Assertions.assertEquals(2, first.id());
+    var withIdTwo = result.stream().filter(category -> category.id() == 2).findFirst().orElse(null);
+    Assertions.assertNotNull(withIdTwo);
+    Assertions.assertEquals("Bungee - Spigot", withIdTwo.name());
   }
 
   @ParameterizedTest
@@ -309,10 +313,11 @@ final class SpigetRequestTest {
     var result = ResourceVersions.create(client).resourceId(2).size(5).exec().join();
     Assertions.assertEquals(5, result.size());
 
-    var first = result.iterator().next();
-    Assertions.assertEquals(2, first.id());
-    Assertions.assertEquals(2, first.resource());
-    Assertions.assertNotNull(first.uuid());
+    var withIdTwo = result.stream().filter(version -> version.id() == 2).findFirst().orElse(null);
+    Assertions.assertNotNull(withIdTwo);
+    Assertions.assertEquals(2, withIdTwo.resource());
+    Assertions.assertEquals("1.0", withIdTwo.name());
+    Assertions.assertEquals("00000003-c001-1bca-0000-0179a782b8fc", withIdTwo.uuid().toString());
   }
 
   @ParameterizedTest

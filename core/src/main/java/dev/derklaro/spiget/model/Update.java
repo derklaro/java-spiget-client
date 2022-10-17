@@ -31,12 +31,12 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class Update {
 
-  private final int id;
-  private final int resource;
+  private int id;
+  private int resource;
 
-  private final String title;
-  private final String description;
+  private String title;
+  private String description;
 
-  private final long date;
-  private final int likes;
+  private long date;
+  private int likes;
 }

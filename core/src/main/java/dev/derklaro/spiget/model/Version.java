@@ -32,13 +32,13 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class Version {
 
-  private final int id;
-  private final UUID uuid;
-  private final int resource;
+  private int id;
+  private UUID uuid;
+  private int resource;
 
-  private final String name;
-  private final long releaseDate;
+  private String name;
+  private long releaseDate;
 
-  private final int downloads;
-  private final Rating rating;
+  private int downloads;
+  private Rating rating;
 }

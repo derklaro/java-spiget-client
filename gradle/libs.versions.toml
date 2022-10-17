@@ -11,6 +11,7 @@ lombok = "1.18.24"
 
 # json mappers
 gson = "2.9.1"
+jackson = "2.13.4.2"
 
 # http
 httpClient5 = "5.1.3"
@@ -26,6 +27,7 @@ lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" 
 
 # json mappers
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+jacksonDatabind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jackson" }
 
 # http
 httpClient5 = { group = "org.apache.httpcomponents.client5", name = "httpclient5", version.ref = "httpClient5" }

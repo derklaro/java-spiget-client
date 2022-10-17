@@ -31,8 +31,8 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class Icon {
 
-  private final String url;
-  private final String data;
-  private final String info;
-  private final String hash;
+  private String url;
+  private String data;
+  private String info;
+  private String hash;
 }

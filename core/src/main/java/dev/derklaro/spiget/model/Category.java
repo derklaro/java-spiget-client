@@ -31,6 +31,6 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class Category {
 
-  private final int id;
-  private final String name;
+  private int id;
+  private String name;
 }

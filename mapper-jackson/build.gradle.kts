@@ -22,18 +22,7 @@
  * THE SOFTWARE.
  */
 
-package dev.derklaro.spiget.model;
-
-import java.util.Map;
-import lombok.Data;
-import lombok.experimental.Accessors;
-
-@Data
-@Accessors(fluent = true)
-public final class Author {
-
-  private int id;
-  private String name;
-  private Icon icon;
-  private Map<String, String> identities;
+dependencies {
+  "api"(projects.core)
+  "compileOnly"(libs.jacksonDatabind)
 }
