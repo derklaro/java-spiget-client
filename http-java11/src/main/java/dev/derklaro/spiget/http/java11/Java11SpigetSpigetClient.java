@@ -25,7 +25,7 @@
 package dev.derklaro.spiget.http.java11;
 
 import dev.derklaro.spiget.JsonMapper;
-import dev.derklaro.spiget.client.AbstractClient;
+import dev.derklaro.spiget.client.AbstractSpigetClient;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -36,7 +36,7 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import lombok.NonNull;
 
-public class Java11SpigetClient extends AbstractClient {
+public class Java11SpigetSpigetClient extends AbstractSpigetClient {
 
   private final HttpClient client = HttpClient.newBuilder()
     .version(HttpClient.Version.HTTP_2)
@@ -44,7 +44,7 @@ public class Java11SpigetClient extends AbstractClient {
     .followRedirects(HttpClient.Redirect.NORMAL)
     .build();
 
-  public Java11SpigetClient(@NonNull JsonMapper mapper) {
+  public Java11SpigetSpigetClient(@NonNull JsonMapper mapper) {
     super(mapper);
   }
 

@@ -25,20 +25,20 @@
 package dev.derklaro.spiget.http.java8;
 
 import dev.derklaro.spiget.JsonMapper;
-import dev.derklaro.spiget.client.AbstractClient;
+import dev.derklaro.spiget.client.AbstractSpigetClient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import lombok.NonNull;
 
-public class Java8SpigetClient extends AbstractClient {
+public class Java8SpigetSpigetClient extends AbstractSpigetClient {
 
-  public Java8SpigetClient(@NonNull JsonMapper mapper) {
+  public Java8SpigetSpigetClient(@NonNull JsonMapper mapper) {
     super(mapper);
   }
 
@@ -77,7 +77,7 @@ public class Java8SpigetClient extends AbstractClient {
         // we can use the input stream here as we always require an "ok" response
         return connection.getInputStream();
       } catch (IOException exception) {
-        throw new UncheckedIOException(exception);
+        throw new CompletionException(exception);
       }
     });
   }

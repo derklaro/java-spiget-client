@@ -35,7 +35,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 
-@Data
+@Data(staticConstructor = "create")
 @Accessors(fluent = true, chain = true)
 @RequestData(uri = "webhook/register", method = "POST")
 public final class RegisterWebhook implements Request<Webhook> {
@@ -49,6 +49,6 @@ public final class RegisterWebhook implements Request<Webhook> {
 
   @Override
   public @NonNull CompletableFuture<Webhook> exec() {
-    return this.client.sendRequestInBody(this);
+    return this.client.sendRequestAsBody(this);
   }
 }

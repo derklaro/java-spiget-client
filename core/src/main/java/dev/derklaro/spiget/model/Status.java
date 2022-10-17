@@ -24,6 +24,7 @@
 
 package dev.derklaro.spiget.model;
 
+import dev.derklaro.spiget.annotation.SerializedName;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -66,20 +67,9 @@ public final class Status {
     private final int authors;
     private final int categories;
     private final int reviews;
-
-    // CHECKSTYLE.OFF: they don't match our style but the rest api gives these
-    @Getter(AccessLevel.NONE)
-    private final int resource_updates;
-    @Getter(AccessLevel.NONE)
-    private final int resource_versions;
-    // CHECKSTYLE.ON
-
-    public int resourceUpdates() {
-      return this.resource_updates;
-    }
-
-    public int resourceVersions() {
-      return this.resource_versions;
-    }
+    @SerializedName("resource_updates")
+    private final int resourceUpdates;
+    @SerializedName("resource_versions")
+    private final int resourceVersions;
   }
 }

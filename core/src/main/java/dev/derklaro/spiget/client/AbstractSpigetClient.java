@@ -29,31 +29,37 @@ import dev.derklaro.spiget.Request;
 import dev.derklaro.spiget.SpigetClient;
 import dev.derklaro.spiget.annotation.ExcludeQuery;
 import dev.derklaro.spiget.annotation.RequestData;
+import dev.derklaro.spiget.annotation.SerializedName;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.text.FieldPosition;
 import java.text.MessageFormat;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
-import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 
 @RequiredArgsConstructor
-public abstract class AbstractClient extends SpigetClient {
+public abstract class AbstractSpigetClient implements SpigetClient {
 
   public static final String BASE_URL = "https://api.spiget.org/v2/";
+
+  // method handles
+  private static final Lookup LOOKUP = MethodHandles.lookup();
+  private static final MethodType GENERIC_FIELD_GETTER_TYPE = MethodType.methodType(Object.class, Object.class);
 
   private final JsonMapper mapper;
   private final Map<Class<?>, RequestInfo> cachedInformation = new ConcurrentHashMap<>();
@@ -70,7 +76,7 @@ public abstract class AbstractClient extends SpigetClient {
   }
 
   @Override
-  public @NonNull <T> CompletableFuture<T> sendRequestInBody(
+  public @NonNull <T> CompletableFuture<T> sendRequestAsBody(
     @NonNull Request<T> request,
     @NonNull Object... uriParams
   ) {
@@ -84,13 +90,14 @@ public abstract class AbstractClient extends SpigetClient {
   }
 
   @Override
-  public @NonNull CompletableFuture<Void> sendRequestEmpty(@NonNull Request<?> request, @NonNull Object... uriParams) {
+  public @NonNull CompletableFuture<Void> sendRequestWithoutResponse(@NonNull Request<?> request,
+    @NonNull Object... uriParams) {
     return this.sendRequestRaw(request, uriParams).thenAccept(stream -> {
       try {
         stream.close();
       } catch (IOException exception) {
         // let the future complete exceptionally
-        throw new UncheckedIOException(exception);
+        throw new CompletionException(exception);
       }
     });
   }
@@ -133,17 +140,36 @@ public abstract class AbstractClient extends SpigetClient {
       if (responseType == null) {
         throw new IllegalArgumentException("Missing type parameter.");
       }
+
       // get the fields which are included in the query
-      List<Field> queryFields = new ArrayList<>();
+      List<Map.Entry<String, MethodHandle>> queryFields = new ArrayList<>();
       for (Field field : clazz.getDeclaredFields()) {
         if (!Modifier.isStatic(field.getModifiers())
           && !Modifier.isTransient(field.getModifiers())
           && !field.isAnnotationPresent(ExcludeQuery.class)
         ) {
-          field.setAccessible(true);
-          queryFields.add(field);
+          try {
+            // get the name of the query parameter
+            SerializedName serializedNameData = field.getAnnotation(SerializedName.class);
+            String serializedName = serializedNameData == null ? field.getName() : serializedNameData.value();
+
+            // get a method handle for the field
+            field.setAccessible(true);
+            MethodHandle fieldGetter = LOOKUP.unreflectGetter(field);
+
+            // convert the handle to a generic one
+            MethodHandle fieldGetterGeneric = fieldGetter.asType(GENERIC_FIELD_GETTER_TYPE);
+            queryFields.add(new SimpleImmutableEntry<>(serializedName, fieldGetterGeneric));
+          } catch (Exception exception) {
+            // generic exception to catch InaccessibleObjectException as well
+            throw new IllegalArgumentException(String.format(
+              "Exception getting request information for request %s (field: %s):",
+              clazz.getCanonicalName(), field
+            ), exception);
+          }
         }
       }
+
       // build the info
       return new RequestInfo(
         responseType,
@@ -152,65 +178,5 @@ public abstract class AbstractClient extends SpigetClient {
         data.method(),
         queryFields);
     });
-  }
-
-  @Data
-  @Accessors(fluent = true)
-  protected static final class RequestInfo {
-
-    private static final Object[] EMPTY = new Object[0];
-
-    private final Type responseType;
-    private final String contentType;
-    private final MessageFormat format;
-    private final String requestMethod;
-    private final List<Field> queryFields;
-
-    public @NonNull String formatUri(@NonNull Request<?> request, @NonNull Object... params) {
-      StringBuffer buffer = new StringBuffer();
-      // format the format for the uri
-      String[] stringified = new String[params.length];
-      for (int i = 0; i < params.length; i++) {
-        stringified[i] = Objects.toString(params[i]);
-      }
-      this.format.format(stringified, buffer, new FieldPosition(0));
-
-      // append the query parameters (if any)
-      boolean oneFieldWritten = false;
-      for (Field queryField : this.queryFields) {
-        try {
-          // get the field value, skip nulls
-          Object fieldValue = queryField.get(request);
-          if (fieldValue == null) {
-            continue;
-          }
-          // change types of collections to comma seperated strings
-          String stringifiedVal;
-          if (fieldValue instanceof Collection<?>) {
-            Collection<?> col = (Collection<?>) fieldValue;
-            // skip empty collections
-            if (col.isEmpty()) {
-              continue;
-            }
-            // append all field values
-            StringBuilder builder = new StringBuilder();
-            for (Object o : col) {
-              builder.append(o).append(",");
-            }
-            // remove the last trailing comma
-            stringifiedVal = builder.substring(0, builder.length() - 1);
-          } else {
-            stringifiedVal = Objects.toString(fieldValue);
-          }
-          // append the query parameter
-          buffer.append(oneFieldWritten ? "&" : "?").append(queryField.getName()).append("=").append(stringifiedVal);
-          oneFieldWritten = true;
-        } catch (ReflectiveOperationException exception) {
-          throw new IllegalStateException("Unable to use reflection on field " + queryField, exception);
-        }
-      }
-      // convert the buffer to one query string
-      return buffer.toString();
-    }
   }
 }

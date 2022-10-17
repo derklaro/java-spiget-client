@@ -25,12 +25,12 @@
 package dev.derklaro.spiget.http.httpclient5;
 
 import dev.derklaro.spiget.JsonMapper;
-import dev.derklaro.spiget.client.AbstractClient;
+import dev.derklaro.spiget.client.AbstractSpigetClient;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.net.URI;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import lombok.NonNull;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -42,7 +42,7 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import org.apache.hc.core5.util.Timeout;
 
-public class HttpClient5SpigetClient extends AbstractClient {
+public class HttpClient5SpigetSpigetClient extends AbstractSpigetClient {
 
   private final CloseableHttpClient client = HttpClients.custom()
     .setDefaultRequestConfig(RequestConfig.custom()
@@ -53,7 +53,7 @@ public class HttpClient5SpigetClient extends AbstractClient {
     .disableConnectionState()
     .build();
 
-  public HttpClient5SpigetClient(@NonNull JsonMapper mapper) {
+  public HttpClient5SpigetSpigetClient(@NonNull JsonMapper mapper) {
     super(mapper);
   }
 
@@ -84,7 +84,7 @@ public class HttpClient5SpigetClient extends AbstractClient {
         throw new IllegalStateException("Unexpected http response code: " + response.getCode());
       } catch (IOException exception) {
         // unchecked rethrow
-        throw new UncheckedIOException(exception);
+        throw new CompletionException(exception);
       }
     });
   }

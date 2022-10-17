@@ -34,7 +34,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 
-@Data
+@Data(staticConstructor = "create")
 @Accessors(fluent = true, chain = true)
 @RequestData(uri = "categories/{0}", method = "GET")
 public final class CategoryDetails implements Request<Category> {

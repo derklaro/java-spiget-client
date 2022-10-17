@@ -22,30 +22,24 @@
  * THE SOFTWARE.
  */
 
-package dev.derklaro.spiget.request.resource;
+package dev.derklaro.spiget.mapper.gson;
 
-import dev.derklaro.spiget.Request;
-import dev.derklaro.spiget.SpigetClient;
-import dev.derklaro.spiget.annotation.ExcludeQuery;
-import dev.derklaro.spiget.annotation.RequestData;
-import dev.derklaro.spiget.model.Resource;
-import java.util.concurrent.CompletableFuture;
-import lombok.Data;
+import com.google.gson.FieldNamingStrategy;
+import dev.derklaro.spiget.annotation.SerializedName;
+import java.lang.reflect.Field;
 import lombok.NonNull;
-import lombok.experimental.Accessors;
 
-@Data(staticConstructor = "create")
-@Accessors(fluent = true, chain = true)
-@RequestData(uri = "resources/{0}", method = "GET")
-public final class ResourceDetails implements Request<Resource> {
+final class SpigetClientFieldNamingStrategy implements FieldNamingStrategy {
 
-  private final transient SpigetClient client;
+  public static final SpigetClientFieldNamingStrategy INSTANCE = new SpigetClientFieldNamingStrategy();
 
-  @ExcludeQuery
-  private int resourceId;
+  private SpigetClientFieldNamingStrategy() {
+  }
 
   @Override
-  public @NonNull CompletableFuture<Resource> exec() {
-    return this.client.sendRequest(this, this.resourceId);
+  public @NonNull String translateName(@NonNull Field f) {
+    // check for our annotation
+    SerializedName serializedNameData = f.getAnnotation(SerializedName.class);
+    return serializedNameData == null ? f.getName() : serializedNameData.value();
   }
 }

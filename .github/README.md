@@ -78,7 +78,7 @@ available through the client as shown below:
 package dev.derklaro.spiget.example;
 
 import dev.derklaro.spiget.SpigetClient;
-import dev.derklaro.spiget.http.java11.Java11SpigetClient;
+import dev.derklaro.spiget.http.java11.Java11SpigetSpigetClient;
 import dev.derklaro.spiget.mapper.gson.GsonMapper;
 import dev.derklaro.spiget.model.Category;
 import java.io.IOException;

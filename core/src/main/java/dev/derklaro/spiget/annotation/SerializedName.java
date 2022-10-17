@@ -22,30 +22,19 @@
  * THE SOFTWARE.
  */
 
-package dev.derklaro.spiget.request.resource;
+package dev.derklaro.spiget.annotation;
 
-import dev.derklaro.spiget.Request;
-import dev.derklaro.spiget.SpigetClient;
-import dev.derklaro.spiget.annotation.ExcludeQuery;
-import dev.derklaro.spiget.annotation.RequestData;
-import dev.derklaro.spiget.model.Resource;
-import java.util.concurrent.CompletableFuture;
-import lombok.Data;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import lombok.NonNull;
-import lombok.experimental.Accessors;
 
-@Data(staticConstructor = "create")
-@Accessors(fluent = true, chain = true)
-@RequestData(uri = "resources/{0}", method = "GET")
-public final class ResourceDetails implements Request<Resource> {
+@Documented
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface SerializedName {
 
-  private final transient SpigetClient client;
-
-  @ExcludeQuery
-  private int resourceId;
-
-  @Override
-  public @NonNull CompletableFuture<Resource> exec() {
-    return this.client.sendRequest(this, this.resourceId);
-  }
+  @NonNull String value();
 }

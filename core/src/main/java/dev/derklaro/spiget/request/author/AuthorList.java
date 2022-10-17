@@ -36,7 +36,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 
-@Data
+@Data(staticConstructor = "create")
 @Accessors(fluent = true, chain = true)
 @RequestData(uri = "authors", method = "GET")
 public final class AuthorList implements Request<Collection<Author>> {

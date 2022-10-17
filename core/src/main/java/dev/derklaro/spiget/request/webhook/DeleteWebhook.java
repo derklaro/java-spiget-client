@@ -33,7 +33,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 
-@Data
+@Data(staticConstructor = "create")
 @Accessors(fluent = true, chain = true)
 @RequestData(uri = "webhook/delete/{0}/{1}", method = "DELETE")
 public final class DeleteWebhook implements Request<Void> {
@@ -47,6 +47,6 @@ public final class DeleteWebhook implements Request<Void> {
 
   @Override
   public @NonNull CompletableFuture<Void> exec() {
-    return this.client.sendRequestEmpty(this, this.hookId, this.secret);
+    return this.client.sendRequestWithoutResponse(this, this.hookId, this.secret);
   }
 }

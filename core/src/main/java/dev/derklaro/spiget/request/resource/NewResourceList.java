@@ -35,7 +35,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 
-@Data
+@Data(staticConstructor = "create")
 @Accessors(fluent = true, chain = true)
 @RequestData(uri = "resources/new", method = "GET")
 public final class NewResourceList implements Request<Set<Resource>> {

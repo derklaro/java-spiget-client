@@ -40,7 +40,10 @@ public final class GsonMapper implements JsonMapper {
 
   public static final GsonMapper INSTANCE = new GsonMapper();
 
-  private final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+  private final Gson gson = new GsonBuilder()
+    .disableHtmlEscaping()
+    .setFieldNamingStrategy(SpigetClientFieldNamingStrategy.INSTANCE)
+    .create();
 
   private GsonMapper() {
   }

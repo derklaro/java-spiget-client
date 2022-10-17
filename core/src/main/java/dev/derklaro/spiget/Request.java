@@ -27,6 +27,7 @@ package dev.derklaro.spiget;
 import java.util.concurrent.CompletableFuture;
 import lombok.NonNull;
 
+@FunctionalInterface
 public interface Request<T> {
 
   @NonNull CompletableFuture<T> exec();

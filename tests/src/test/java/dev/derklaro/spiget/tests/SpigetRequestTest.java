@@ -27,17 +27,47 @@ package dev.derklaro.spiget.tests;
 import dev.derklaro.spiget.SpigetClient;
 import dev.derklaro.spiget.data.Sort;
 import dev.derklaro.spiget.data.Sort.Order;
-import dev.derklaro.spiget.http.httpclient5.HttpClient5SpigetClient;
-import dev.derklaro.spiget.http.java11.Java11SpigetClient;
-import dev.derklaro.spiget.http.java8.Java8SpigetClient;
+import dev.derklaro.spiget.http.httpclient5.HttpClient5SpigetSpigetClient;
+import dev.derklaro.spiget.http.java11.Java11SpigetSpigetClient;
+import dev.derklaro.spiget.http.java8.Java8SpigetSpigetClient;
 import dev.derklaro.spiget.mapper.gson.GsonMapper;
+import dev.derklaro.spiget.request.author.AuthorDetails;
+import dev.derklaro.spiget.request.author.AuthorList;
+import dev.derklaro.spiget.request.author.AuthorResources;
+import dev.derklaro.spiget.request.author.AuthorReviews;
+import dev.derklaro.spiget.request.author.AuthorSearch;
+import dev.derklaro.spiget.request.category.CategoryDetails;
+import dev.derklaro.spiget.request.category.CategoryList;
+import dev.derklaro.spiget.request.category.CategoryResources;
+import dev.derklaro.spiget.request.resource.FreeResourceList;
+import dev.derklaro.spiget.request.resource.LastResourceUpdate;
+import dev.derklaro.spiget.request.resource.LatestResourceVersion;
+import dev.derklaro.spiget.request.resource.NewResourceList;
+import dev.derklaro.spiget.request.resource.PremiumResourceList;
+import dev.derklaro.spiget.request.resource.ResourceAuthor;
+import dev.derklaro.spiget.request.resource.ResourceDetails;
+import dev.derklaro.spiget.request.resource.ResourceDownload;
+import dev.derklaro.spiget.request.resource.ResourceList;
+import dev.derklaro.spiget.request.resource.ResourceReviews;
+import dev.derklaro.spiget.request.resource.ResourceSearch;
+import dev.derklaro.spiget.request.resource.ResourceUpdates;
+import dev.derklaro.spiget.request.resource.ResourceVersion;
+import dev.derklaro.spiget.request.resource.ResourceVersionDownload;
+import dev.derklaro.spiget.request.resource.ResourceVersions;
+import dev.derklaro.spiget.request.resource.VersionResourceList;
+import dev.derklaro.spiget.request.status.ApiStatus;
+import dev.derklaro.spiget.request.webhook.DeleteWebhook;
+import dev.derklaro.spiget.request.webhook.RegisterWebhook;
+import dev.derklaro.spiget.request.webhook.WebhookStatus;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletionException;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -45,19 +75,32 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 @TestMethodOrder(OrderAnnotation.class)
-public class SpigetRequestTest {
+final class SpigetRequestTest {
 
   static Stream<Arguments> clients() {
     return Stream.of(
-      Arguments.of(new Java8SpigetClient(GsonMapper.INSTANCE)),
-      Arguments.of(new Java11SpigetClient(GsonMapper.INSTANCE)),
-      Arguments.of(new HttpClient5SpigetClient(GsonMapper.INSTANCE)));
+      Arguments.of(new Java8SpigetSpigetClient(GsonMapper.INSTANCE)),
+      Arguments.of(new Java11SpigetSpigetClient(GsonMapper.INSTANCE)),
+      Arguments.of(new HttpClient5SpigetSpigetClient(GsonMapper.INSTANCE)));
+  }
+
+  @ParameterizedTest
+  @MethodSource("clients")
+  void testAuthorDetails(SpigetClient client) {
+    var result = AuthorDetails.create(client).id(1).exec().join();
+    Assertions.assertEquals("md_5", result.name());
+    Assertions.assertEquals("md__5", result.identities().get("twitter"));
   }
 
   @ParameterizedTest
   @MethodSource("clients")
   void testAuthorList(SpigetClient client) {
-    var result = client.authorList().size(5).page(7).sort(Sort.of("name", Order.ASC)).fields(Set.of("name")).exec()
+    var result = AuthorList.create(client)
+      .size(5)
+      .page(7)
+      .sort(Sort.of("name", Order.ASC))
+      .fields(Set.of("name"))
+      .exec()
       .join();
     Assertions.assertEquals(5, result.size());
 
@@ -67,16 +110,8 @@ public class SpigetRequestTest {
 
   @ParameterizedTest
   @MethodSource("clients")
-  void testAuthorDetails(SpigetClient client) {
-    var result = client.authorDetails().id(1).exec().join();
-    Assertions.assertEquals("md_5", result.name());
-    Assertions.assertEquals("md__5", result.identities().get("twitter"));
-  }
-
-  @ParameterizedTest
-  @MethodSource("clients")
   void testAuthorResources(SpigetClient client) {
-    var result = client.authorResources().authorId(1).size(5).sort(Sort.of("name", Order.ASC)).exec().join();
+    var result = AuthorResources.create(client).authorId(1).size(5).sort(Sort.of("name", Order.ASC)).exec().join();
     Assertions.assertEquals(5, result.size());
 
     var first = result.iterator().next();
@@ -86,7 +121,7 @@ public class SpigetRequestTest {
   @ParameterizedTest
   @MethodSource("clients")
   void testAuthorReviews(SpigetClient client) {
-    var result = client.authorReviews().authorId(1).page(2).size(1).exec().join();
+    var result = AuthorReviews.create(client).authorId(1).page(2).size(1).exec().join();
     Assertions.assertEquals(1, result.size());
 
     var first = result.iterator().next();
@@ -96,7 +131,7 @@ public class SpigetRequestTest {
   @ParameterizedTest
   @MethodSource("clients")
   void testAuthorSearch(SpigetClient client) {
-    var result = client.authorSearch().query("md_5").size(1).exec().join();
+    var result = AuthorSearch.create(client).query("md_5").size(1).exec().join();
     Assertions.assertEquals(1, result.size());
 
     var first = result.iterator().next();
@@ -107,8 +142,16 @@ public class SpigetRequestTest {
 
   @ParameterizedTest
   @MethodSource("clients")
+  void testCategoryDetails(SpigetClient client) {
+    var result = CategoryDetails.create(client).categoryId(2).exec().join();
+    Assertions.assertEquals(2, result.id());
+    Assertions.assertEquals("Bungee - Spigot", result.name());
+  }
+
+  @ParameterizedTest
+  @MethodSource("clients")
   void testCategoryList(SpigetClient client) {
-    var result = client.categoryList().size(5).exec().join();
+    var result = CategoryList.create(client).size(5).exec().join();
     Assertions.assertEquals(5, result.size());
 
     var first = result.iterator().next();
@@ -117,16 +160,8 @@ public class SpigetRequestTest {
 
   @ParameterizedTest
   @MethodSource("clients")
-  void testCategoryDetails(SpigetClient client) {
-    var result = client.categoryDetails().categoryId(2).exec().join();
-    Assertions.assertEquals(2, result.id());
-    Assertions.assertEquals("Bungee - Spigot", result.name());
-  }
-
-  @ParameterizedTest
-  @MethodSource("clients")
   void testCategoryResources(SpigetClient client) {
-    var result = client.categoryResources().categoryId(2).page(5).size(5).exec().join();
+    var result = CategoryResources.create(client).categoryId(2).page(5).size(5).exec().join();
     Assertions.assertEquals(5, result.size());
 
     var first = result.iterator().next();
@@ -135,60 +170,57 @@ public class SpigetRequestTest {
 
   @ParameterizedTest
   @MethodSource("clients")
-  void testResourceList(SpigetClient client) {
-    var result = client.resourceList().size(5).page(3).exec().join();
-    Assertions.assertEquals(5, result.size());
-  }
-
-  @ParameterizedTest
-  @MethodSource("clients")
-  void testResourceForVersions(SpigetClient client) {
-    var result = client.versionResourceList().version("1.16").size(5).page(2).method("all").exec().join();
-    Assertions.assertEquals(5, result.match().size());
-    Assertions.assertEquals("all", result.method());
-    Assertions.assertTrue(result.check().contains("1.16"));
-
-    var first = result.match().iterator().next();
-    Assertions.assertTrue(first.testedVersions().contains("1.16"));
-  }
-
-  @ParameterizedTest
-  @MethodSource("clients")
   void testFreeResourceList(SpigetClient client) {
-    var result = client.freeResourceList().size(5).page(3).exec().join();
+    var result = FreeResourceList.create(client).size(5).page(3).exec().join();
     Assertions.assertEquals(5, result.size());
+  }
+
+  @ParameterizedTest
+  @MethodSource("clients")
+  void testLastResourceUpdate(SpigetClient client) {
+    var result = LastResourceUpdate.create(client).resourceId(2).exec().join();
+    Assertions.assertNotNull(result.description());
+    Assertions.assertEquals(2, result.resource());
+  }
+
+  @ParameterizedTest
+  @MethodSource("clients")
+  void testLatestResourceVersion(SpigetClient client) {
+    var result = LatestResourceVersion.create(client).resourceId(2).exec().join();
+    Assertions.assertNotNull(result.uuid());
+    Assertions.assertEquals(2, result.resource());
   }
 
   @ParameterizedTest
   @MethodSource("clients")
   void testNewResourceList(SpigetClient client) {
-    var result = client.newResourceList().size(5).page(3).exec().join();
+    var result = NewResourceList.create(client).size(5).page(3).exec().join();
     Assertions.assertEquals(5, result.size());
   }
 
   @ParameterizedTest
   @MethodSource("clients")
   void testPremiumResourceList(SpigetClient client) {
-    var result = client.premiumResourceList().size(5).page(3).exec().join();
+    var result = PremiumResourceList.create(client).size(5).page(3).exec().join();
     Assertions.assertEquals(5, result.size());
   }
 
   @ParameterizedTest
   @MethodSource("clients")
-  void testResourceDetails(SpigetClient client) {
-    var result = client.resourceDetails().resourceId(2).exec().join();
-    Assertions.assertEquals(2, result.id());
-    Assertions.assertEquals(1, result.existenceStatus());
-    Assertions.assertEquals(1364368440, result.releaseDate());
+  void testResourceAuthor(SpigetClient client) {
+    var result = ResourceAuthor.create(client).resourceId(2).exec().join();
+    Assertions.assertEquals(106, result.id());
+    Assertions.assertEquals("LaxWasHere", result.name());
+    Assertions.assertEquals("LaxWasHere", result.identities().get("yahoo"));
   }
 
   @ParameterizedTest
   @MethodSource("clients")
-  void testResourceAuthor(SpigetClient client) {
-    var result = client.resourceAuthor().resourceId(2).exec().join();
-    Assertions.assertEquals(106, result.id());
-    Assertions.assertEquals("LaxWasHere", result.name());
-    Assertions.assertEquals("LaxWasHere", result.identities().get("yahoo"));
+  void testResourceDetails(SpigetClient client) {
+    var result = ResourceDetails.create(client).resourceId(2).exec().join();
+    Assertions.assertEquals(2, result.id());
+    Assertions.assertEquals(1, result.existenceStatus());
+    Assertions.assertEquals(1364368440, result.releaseDate());
   }
 
   @ParameterizedTest
@@ -198,7 +230,7 @@ public class SpigetRequestTest {
     Files.deleteIfExists(target);
 
     try (var out = Files.newOutputStream(target);
-      var in = client.resourceDownload().resourceId(2).exec().join()) {
+      var in = ResourceDownload.create(client).resourceId(2).exec().join()) {
       in.transferTo(out);
     }
 
@@ -210,8 +242,15 @@ public class SpigetRequestTest {
 
   @ParameterizedTest
   @MethodSource("clients")
+  void testResourceList(SpigetClient client) {
+    var result = ResourceList.create(client).size(5).page(3).exec().join();
+    Assertions.assertEquals(5, result.size());
+  }
+
+  @ParameterizedTest
+  @MethodSource("clients")
   void testResourceReviews(SpigetClient client) {
-    var result = client.resourceReviews().resourceId(2).size(5).exec().join();
+    var result = ResourceReviews.create(client).resourceId(2).size(5).exec().join();
     Assertions.assertEquals(5, result.size());
 
     var first = result.iterator().next();
@@ -220,8 +259,24 @@ public class SpigetRequestTest {
 
   @ParameterizedTest
   @MethodSource("clients")
+  void testResourceSearch(SpigetClient client) {
+    var result = ResourceSearch.create(client)
+      .size(6)
+      .query("CloudNet")
+      .field("name")
+      .fields(Set.of("name"))
+      .exec()
+      .join();
+    Assertions.assertEquals(6, result.size());
+
+    var first = result.iterator().next();
+    Assertions.assertNull(first.sourceCodeLink());
+  }
+
+  @ParameterizedTest
+  @MethodSource("clients")
   void testResourceUpdates(SpigetClient client) {
-    var result = client.resourceUpdates().resourceId(2).size(1).exec().join();
+    var result = ResourceUpdates.create(client).resourceId(2).size(1).exec().join();
     Assertions.assertEquals(1, result.size());
 
     var first = result.iterator().next();
@@ -231,16 +286,31 @@ public class SpigetRequestTest {
 
   @ParameterizedTest
   @MethodSource("clients")
-  void testLastResourceUpdate(SpigetClient client) {
-    var result = client.lastResourceUpdate().resourceId(2).exec().join();
-    Assertions.assertNotNull(result.description());
-    Assertions.assertEquals(2, result.resource());
+  void testResourceVersionDetails(SpigetClient client) {
+    var result = ResourceVersion.create(client).resourceId(19254).versionId(429596).exec().join();
+    Assertions.assertNotNull(result.uuid());
+    Assertions.assertEquals(429596, result.id());
+    Assertions.assertEquals(19254, result.resource());
+  }
+
+  @ParameterizedTest
+  @MethodSource("clients")
+  @SuppressWarnings("resource")
+  void testResourceVersionDownload(SpigetClient client) {
+    var exception = Assertions.assertThrows(
+      CompletionException.class,
+      () -> ResourceVersionDownload.create(client).resourceId(3).versionId(352).exec().join());
+    var message = exception.getMessage();
+
+    // we're not able to download a version around the spigot proxy, we can only check if we get a response
+    // Server returned HTTP response code: 503 for URL: https://spigotmc.org/resources/3/download?version=352
+    Assertions.assertTrue(message.contains("response code"));
   }
 
   @ParameterizedTest
   @MethodSource("clients")
   void testResourceVersions(SpigetClient client) {
-    var result = client.resourceVersions().resourceId(2).size(5).exec().join();
+    var result = ResourceVersions.create(client).resourceId(2).size(5).exec().join();
     Assertions.assertEquals(5, result.size());
 
     var first = result.iterator().next();
@@ -251,56 +321,46 @@ public class SpigetRequestTest {
 
   @ParameterizedTest
   @MethodSource("clients")
-  void testLatestResourceVersion(SpigetClient client) {
-    var result = client.latestResourceVersion().resourceId(2).exec().join();
-    Assertions.assertNotNull(result.uuid());
-    Assertions.assertEquals(2, result.resource());
-  }
+  void testResourceForVersions(SpigetClient client) {
+    var result = VersionResourceList.create(client).version("1.16").size(5).page(2).method("all").exec().join();
+    Assertions.assertEquals(5, result.match().size());
+    Assertions.assertEquals("all", result.method());
+    Assertions.assertTrue(result.check().contains("1.16"));
 
-  @ParameterizedTest
-  @MethodSource("clients")
-  void testResourceVersionDetails(SpigetClient client) {
-    var result = client.resourceVersion().resourceId(19254).versionId(429596).exec().join();
-    Assertions.assertNotNull(result.uuid());
-    Assertions.assertEquals(429596, result.id());
-    Assertions.assertEquals(19254, result.resource());
-  }
-
-  @ParameterizedTest
-  @MethodSource("clients")
-  void testResourceSearch(SpigetClient client) {
-    var result = client.resourceSearch().size(6).query("CloudNet").field("name").fields(Set.of("name")).exec().join();
-    Assertions.assertEquals(6, result.size());
-
-    var first = result.iterator().next();
-    Assertions.assertNull(first.sourceCodeLink());
+    var first = result.match().iterator().next();
+    Assertions.assertTrue(first.testedVersions().contains("1.16"));
   }
 
   @ParameterizedTest
   @MethodSource("clients")
   void testApiStatus(SpigetClient client) {
-    var result = client.apiStatus().exec().join();
-    Assertions.assertNotNull(result.stats());
+    var result = ApiStatus.create(client).exec().join();
     Assertions.assertNotNull(result.server());
+
+    var stats = result.stats();
+    Assertions.assertNotNull(stats);
+    Assertions.assertTrue(stats.resourceUpdates() > 0);
+    Assertions.assertTrue(stats.resourceVersions() > 0);
   }
 
   @ParameterizedTest
   @MethodSource("clients")
+  @Disabled("Deletion of hooks is now possible currently, we don't want to spam hooks")
   void testWebhook(SpigetClient client) {
     var url = String.format("https://%s.de", UUID.randomUUID().toString().replace("-", ""));
 
     // create
-    var result = client.registerWebhook().url(url).events(Set.of("resource-update")).exec().join();
+    var result = RegisterWebhook.create(client).url(url).events(Set.of("resource-update")).exec().join();
     Assertions.assertNotNull(result.id());
     Assertions.assertNotNull(result.secret());
 
     // status
-    var status = client.webhookStatus().hookId(result.id()).exec().join();
+    var status = WebhookStatus.create(client).hookId(result.id()).exec().join();
     Assertions.assertTrue(status.status() >= 0);
     Assertions.assertTrue(status.failedConnections() >= 0);
 
     // delete
-    client.deleteWebhook().hookId(result.id()).secret(result.secret()).exec().join();
+    DeleteWebhook.create(client).hookId(result.id()).secret(result.secret()).exec().join();
 
     // should throw exception now, but it doesn't for some reason? Might be a bug on the spiget site
     // Assertions.assertThrows(Exception.class, () -> client.webhookStatus().hookId(result.id()).exec().join());
