@@ -55,10 +55,23 @@
         value="Using Throwable#printStackTrace() is forbidden. Rethrow, log or handle the exception."/>
     </module>
     <module name="RegexpSinglelineJava">
+      <property name="format" value="^import [a-z.]*\.[A-Z]\w+(\.[A-Z]\w+)+;$"/>
+      <property name="ignoreComments" value="true"/>
+      <property name="message" value="Using inner class imports is forbidden."/>
+    </module>
+    <module name="RegexpSinglelineJava">
+      <property name="format" value="^import (?!lombok).*(NotNull|NonNull|Nonnull);$"/>
+      <property name="ignoreComments" value="true"/>
+      <property name="message" value="Any @NonNull annnotation should be imported from lombok."/>
+    </module>
+    <module name="RegexpSinglelineJava">
       <property name="format" value="System\.(out|err)\..+;"/>
       <property name="ignoreComments" value="true"/>
       <property name="message"
-        value="Using System.our or System.err is forbidden. Use a proper logger to log messages into the console."/>
+        value="Using System.out or System.err is forbidden. Use a proper logger to log messages into the console."/>
+    </module>
+    <module name="RequireThis">
+      <property name="validateOnlyOverlapping" value="false"/>
     </module>
     <module name="OuterTypeFilename"/>
     <module name="IllegalTokenText">
@@ -102,6 +115,7 @@
                     LITERAL_DO, LITERAL_ELSE, LITERAL_FINALLY, LITERAL_FOR, LITERAL_IF,
                     LITERAL_SWITCH, LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_WHILE, METHOD_DEF,
                     OBJBLOCK, STATIC_INIT, RECORD_DEF, COMPACT_CTOR_DEF"/>
+      <property name="ignoreEnums" value="false"/>
     </module>
     <module name="RightCurly">
       <property name="id" value="RightCurlySame"/>
@@ -126,7 +140,7 @@
     <module name="WhitespaceAfter">
       <property name="tokens"
         value="COMMA, SEMI, TYPECAST, LITERAL_IF, LITERAL_ELSE,
-                    LITERAL_WHILE, LITERAL_DO, LITERAL_FOR, DO_WHILE"/>
+                    LITERAL_WHILE, LITERAL_DO, LITERAL_FOR, DO_WHILE, LITERAL_CASE, LITERAL_YIELD"/>
     </module>
     <module name="WhitespaceAround">
       <message key="ws.notFollowed"
@@ -267,6 +281,14 @@
       <message key="ws.notPreceded"
         value="GenericWhitespace ''{0}'' is not preceded with whitespace."/>
     </module>
+    <module name="Indentation">
+      <property name="basicOffset" value="2"/>
+      <property name="braceAdjustment" value="0"/>
+      <property name="caseIndent" value="2"/>
+      <property name="throwsIndent" value="2"/>
+      <property name="lineWrappingIndentation" value="2"/>
+      <property name="arrayInitIndent" value="2"/>
+    </module>
     <module name="MethodParamPad">
       <property name="tokens"
         value="CTOR_DEF, LITERAL_NEW, METHOD_CALL, METHOD_DEF,
@@ -303,7 +325,7 @@
     <module name="AtclauseOrder">
       <property name="tagOrder" value="@param, @return, @throws, @deprecated"/>
       <property name="target"
-        value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF"/>
+        value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF, RECORD_DEF, COMPACT_CTOR_DEF"/>
     </module>
     <module name="JavadocMethod">
       <property name="accessModifiers" value="public"/>
@@ -330,6 +352,11 @@
         value="${org.checkstyle.google.suppressionxpathfilter.config}"/>
       <property name="optional" value="true"/>
     </module>
+    <module name="AvoidDoubleBraceInitialization"/>
+    <module name="AvoidNoArgumentSuperConstructorCall"/>
+    <module name="ConstantName"/>
+    <module name="EmptyStatement"/>
+    <module name="MissingOverride"/>
   </module>
   <property name="fileExtensions" value="java, properties, xml"/>
   <property name="charset" value="UTF-8"/>

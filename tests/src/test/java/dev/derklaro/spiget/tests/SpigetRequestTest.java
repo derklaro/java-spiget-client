@@ -26,7 +26,6 @@ package dev.derklaro.spiget.tests;
 
 import dev.derklaro.spiget.SpigetClient;
 import dev.derklaro.spiget.data.Sort;
-import dev.derklaro.spiget.data.Sort.Order;
 import dev.derklaro.spiget.http.httpclient5.HttpClient5SpigetSpigetClient;
 import dev.derklaro.spiget.http.java11.Java11SpigetSpigetClient;
 import dev.derklaro.spiget.http.java8.Java8SpigetSpigetClient;
@@ -68,13 +67,10 @@ import java.util.concurrent.CompletionException;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@TestMethodOrder(OrderAnnotation.class)
 final class SpigetRequestTest {
 
   static Stream<Arguments> clients() {
@@ -98,7 +94,7 @@ final class SpigetRequestTest {
     var result = AuthorList.create(client)
       .size(5)
       .page(7)
-      .sort(Sort.of("name", Order.ASC))
+      .sort(Sort.of("name", Sort.Order.ASC))
       .fields(Set.of("name"))
       .exec()
       .join();
@@ -111,7 +107,7 @@ final class SpigetRequestTest {
   @ParameterizedTest
   @MethodSource("clients")
   void testAuthorResources(SpigetClient client) {
-    var result = AuthorResources.create(client).authorId(1).size(5).sort(Sort.of("name", Order.ASC)).exec().join();
+    var result = AuthorResources.create(client).authorId(1).size(5).sort(Sort.of("name", Sort.Order.ASC)).exec().join();
     Assertions.assertEquals(5, result.size());
 
     var first = result.iterator().next();

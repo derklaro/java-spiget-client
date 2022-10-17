@@ -22,15 +22,14 @@
  * THE SOFTWARE.
  */
 
-import org.cadixdev.gradle.licenser.LicenseExtension
+import com.diffplug.gradle.spotless.SpotlessExtension
 
 plugins {
-  id("org.cadixdev.licenser") version "0.6.1"
-  id("com.github.ben-manes.versions") version "0.42.0"
-  id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+  alias(libs.plugins.spotless)
+  alias(libs.plugins.nexusPublish)
 }
 
-defaultTasks("build", "checkLicenses", "test", "jar")
+defaultTasks("build", "test", "jar")
 
 allprojects {
   group = "dev.derklaro.spiget"
@@ -46,7 +45,7 @@ subprojects {
   apply(plugin = "checkstyle")
   apply(plugin = "java-library")
   apply(plugin = "maven-publish")
-  apply(plugin = "org.cadixdev.licenser")
+  apply(plugin = "com.diffplug.spotless")
 
   dependencies {
     "compileOnly"(rootProject.libs.lombok)
@@ -85,9 +84,10 @@ subprojects {
     }
   }
 
-  extensions.configure<LicenseExtension> {
-    include("**/*.java")
-    header(rootProject.file("license_header.txt"))
+  extensions.configure<SpotlessExtension> {
+    java {
+      licenseHeaderFile(rootProject.file("license_header.txt"))
+    }
   }
 
   extensions.configure<JavaPluginExtension> {
@@ -96,7 +96,7 @@ subprojects {
   }
 
   extensions.configure<CheckstyleExtension> {
-    toolVersion = "9.2.1"
+    toolVersion = "10.3.4"
   }
 
   extensions.configure<PublishingExtension> {

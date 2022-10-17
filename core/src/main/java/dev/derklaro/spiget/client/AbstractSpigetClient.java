@@ -34,14 +34,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
-import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +57,7 @@ public abstract class AbstractSpigetClient implements SpigetClient {
   public static final String BASE_URL = "https://api.spiget.org/v2/";
 
   // method handles
-  private static final Lookup LOOKUP = MethodHandles.lookup();
+  private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
   private static final MethodType GENERIC_FIELD_GETTER_TYPE = MethodType.methodType(Object.class, Object.class);
 
   private final JsonMapper mapper;
@@ -159,7 +158,7 @@ public abstract class AbstractSpigetClient implements SpigetClient {
 
             // convert the handle to a generic one
             MethodHandle fieldGetterGeneric = fieldGetter.asType(GENERIC_FIELD_GETTER_TYPE);
-            queryFields.add(new SimpleImmutableEntry<>(serializedName, fieldGetterGeneric));
+            queryFields.add(new AbstractMap.SimpleImmutableEntry<>(serializedName, fieldGetterGeneric));
           } catch (Exception exception) {
             // generic exception to catch InaccessibleObjectException as well
             throw new IllegalArgumentException(String.format(

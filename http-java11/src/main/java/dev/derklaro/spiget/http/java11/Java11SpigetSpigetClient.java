@@ -30,7 +30,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
@@ -60,7 +59,9 @@ public class Java11SpigetSpigetClient extends AbstractSpigetClient {
         .timeout(Duration.ofSeconds(30))
         .header("Content-Type", contentType)
         .header("User-Agent", "spiget-java-client")
-        .method(requestMethod, body != null ? BodyPublishers.ofString(body) : BodyPublishers.noBody())
+        .method(
+          requestMethod,
+          body != null ? HttpRequest.BodyPublishers.ofString(body) : HttpRequest.BodyPublishers.noBody())
         .build(),
       HttpResponse.BodyHandlers.ofInputStream()
     ).thenApply(response -> {

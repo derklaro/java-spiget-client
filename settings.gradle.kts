@@ -22,9 +22,8 @@
  * THE SOFTWARE.
  */
 
-enableFeaturePreview("VERSION_CATALOGS")
+enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "spiget-java-client"
-
 include("core", "http-java8", "http-java11", "http-httpclient5", "mapper-gson", "tests")
