@@ -55,13 +55,14 @@ types, one http implementation to send a request and one json-mapper to en- / de
 Please note that no component shadows any dependency by default. Your library is required to define the following 
 dependencies if you use the given component:
 
-| Component        | Required dependencies                           | Required Version Minimum |
-|------------------|-------------------------------------------------|--------------------------|
-| core             | no dependencies required                        | Java >= 8                |
-| http-java8       | no dependencies required                        | Java >= 8                |
-| http-java11      | no dependencies required                        | Java >= 11               |
-| http-httpclient5 | `org.apache.httpcomponents.client5:httpclient5` | 5.X                      |
-| mapper-gson      | `com.google.code.gson:gson`                     | 2.X                      |
+| Component        | Required dependencies                           | Required Version |
+|------------------|-------------------------------------------------|------------------|
+| core             | no dependencies required                        | Java >= 8        |
+| http-java8       | no dependencies required                        | Java >= 8        |
+| http-java11      | no dependencies required                        | Java >= 11       |
+| http-httpclient5 | `org.apache.httpcomponents.client5:httpclient5` | 5.X              |
+| mapper-gson      | `com.google.code.gson:gson`                     | 2.X              |
+| mapper-jackson   | `com.fasterxml.jackson.core:jackson-databind`   | 2.X              |
 
 ### How to send a request
 
