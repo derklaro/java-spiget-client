@@ -33,12 +33,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 import lombok.NonNull;
+import org.jetbrains.annotations.Nullable;
 
-public class Java11SpigetSpigetClient extends AbstractSpigetClient {
+public final class Java11SpigetClient extends AbstractSpigetClient {
 
   private final HttpClient client;
 
-  public Java11SpigetSpigetClient(@NonNull SpigetClientConfig clientConfig) {
+  public Java11SpigetClient(@NonNull SpigetClientConfig clientConfig) {
     super(clientConfig);
     this.client = createClient(clientConfig);
   }
@@ -53,7 +54,7 @@ public class Java11SpigetSpigetClient extends AbstractSpigetClient {
 
   @Override
   protected @NonNull CompletableFuture<InputStream> doSendRequest(
-    String body,
+    @Nullable String body,
     @NonNull String uri,
     @NonNull String contentType,
     @NonNull String requestMethod

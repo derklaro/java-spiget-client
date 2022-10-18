@@ -27,9 +27,9 @@ package dev.derklaro.spiget.tests;
 import dev.derklaro.spiget.SpigetClient;
 import dev.derklaro.spiget.SpigetClientConfig;
 import dev.derklaro.spiget.data.Sort;
-import dev.derklaro.spiget.http.httpclient5.HttpClient5SpigetSpigetClient;
-import dev.derklaro.spiget.http.java11.Java11SpigetSpigetClient;
-import dev.derklaro.spiget.http.java8.Java8SpigetSpigetClient;
+import dev.derklaro.spiget.http.httpclient5.HttpClient5SpigetClient;
+import dev.derklaro.spiget.http.java11.Java11SpigetClient;
+import dev.derklaro.spiget.http.java8.Java8SpigetClient;
 import dev.derklaro.spiget.mapper.gson.GsonMapper;
 import dev.derklaro.spiget.mapper.jackson.JacksonMapper;
 import dev.derklaro.spiget.request.author.AuthorDetails;
@@ -63,6 +63,7 @@ import dev.derklaro.spiget.request.webhook.WebhookStatus;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletionException;
@@ -77,10 +78,10 @@ final class SpigetRequestTest {
 
   static Stream<Arguments> clients() {
     return Stream.of(
-      Arguments.of(new Java8SpigetSpigetClient(SpigetClientConfig.create(GsonMapper.INSTANCE))),
-      Arguments.of(new Java11SpigetSpigetClient(SpigetClientConfig.create(GsonMapper.INSTANCE))),
-      Arguments.of(new Java11SpigetSpigetClient(SpigetClientConfig.create(JacksonMapper.INSTANCE))),
-      Arguments.of(new HttpClient5SpigetSpigetClient(SpigetClientConfig.create(JacksonMapper.INSTANCE))));
+      Arguments.of(new Java8SpigetClient(SpigetClientConfig.create(GsonMapper.INSTANCE).connectTimeout(Duration.ofSeconds(30)))),
+      Arguments.of(new Java11SpigetClient(SpigetClientConfig.create(GsonMapper.INSTANCE))),
+      Arguments.of(new Java11SpigetClient(SpigetClientConfig.create(JacksonMapper.INSTANCE))),
+      Arguments.of(new HttpClient5SpigetClient(SpigetClientConfig.create(JacksonMapper.INSTANCE))));
   }
 
   @ParameterizedTest

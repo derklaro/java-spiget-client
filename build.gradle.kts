@@ -48,8 +48,11 @@ subprojects {
   apply(plugin = "com.diffplug.spotless")
 
   dependencies {
+    // lombok
     "compileOnly"(rootProject.libs.lombok)
     "annotationProcessor"(rootProject.libs.lombok)
+    // other
+    "compileOnly"(rootProject.libs.annotations)
   }
 
   tasks.withType<JavaCompile> {

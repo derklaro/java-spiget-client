@@ -35,16 +35,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import lombok.NonNull;
+import org.jetbrains.annotations.Nullable;
 
-public class Java8SpigetSpigetClient extends AbstractSpigetClient {
+public final class Java8SpigetClient extends AbstractSpigetClient {
 
-  public Java8SpigetSpigetClient(@NonNull SpigetClientConfig clientConfig) {
+  public Java8SpigetClient(@NonNull SpigetClientConfig clientConfig) {
     super(clientConfig);
   }
 
   @Override
   protected @NonNull CompletableFuture<InputStream> doSendRequest(
-    String body,
+    @Nullable String body,
     @NonNull String uri,
     @NonNull String contentType,
     @NonNull String requestMethod
@@ -64,7 +65,7 @@ public class Java8SpigetSpigetClient extends AbstractSpigetClient {
         connection.setReadTimeout((int) this.clientConfig.requestTimeout().toMillis());
         connection.setConnectTimeout((int) this.clientConfig.connectTimeout().toMillis());
         // request properties
-        connection.setRequestProperty("content-type", contentType);
+        connection.setRequestProperty("Content-Type", contentType);
         connection.setRequestProperty("User-Agent", this.clientConfig.userAgent());
         // connect and send the body if present
         connection.connect();

@@ -29,6 +29,7 @@ import dev.derklaro.spiget.client.AbstractSpigetClient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import lombok.NonNull;
@@ -38,15 +39,17 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import org.apache.hc.core5.util.Timeout;
+import org.jetbrains.annotations.Nullable;
 
-public class HttpClient5SpigetSpigetClient extends AbstractSpigetClient {
+public final class HttpClient5SpigetClient extends AbstractSpigetClient {
 
   private final CloseableHttpClient client;
 
-  public HttpClient5SpigetSpigetClient(@NonNull SpigetClientConfig clientConfig) {
+  public HttpClient5SpigetClient(@NonNull SpigetClientConfig clientConfig) {
     super(clientConfig);
     this.client = createClient(clientConfig);
   }
@@ -59,23 +62,26 @@ public class HttpClient5SpigetSpigetClient extends AbstractSpigetClient {
         .setResponseTimeout(Timeout.ofMilliseconds(clientConfig.requestTimeout().toMillis()))
         .build())
       .disableConnectionState()
+      .setUserAgent(clientConfig.userAgent())
       .build();
   }
 
   @Override
   protected @NonNull CompletableFuture<InputStream> doSendRequest(
-    String body,
+    @Nullable String body,
     @NonNull String uri,
     @NonNull String contentType,
     @NonNull String requestMethod
   ) {
     ClassicHttpRequest request = new BasicClassicHttpRequest(requestMethod, URI.create(uri));
-    // headers
-    request.addHeader("Content-Type", contentType);
-    request.addHeader("User-Agent", this.clientConfig.userAgent());
-    // body
+
+    // parse the content type
+    ContentType ct = Objects.requireNonNull(ContentType.parse(contentType), "Invalid content type " + contentType);
+    request.setHeader(HttpHeaders.CONTENT_TYPE, ct);
+
+    // apply the body
     if (body != null) {
-      request.setEntity(new StringEntity(body, ContentType.parse(contentType)));
+      request.setEntity(new StringEntity(body, ct));
     }
 
     return CompletableFuture.supplyAsync(() -> {

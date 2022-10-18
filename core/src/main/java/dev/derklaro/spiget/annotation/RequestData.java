@@ -29,15 +29,16 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import lombok.NonNull;
 
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequestData {
 
-  String uri();
+  @NonNull String uri();
 
-  String method();
+  @NonNull String method();
 
-  String contentType() default "application/json";
+  @NonNull String contentType() default "application/json";
 }

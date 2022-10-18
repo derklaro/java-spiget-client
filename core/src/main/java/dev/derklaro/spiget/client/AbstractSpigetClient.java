@@ -49,6 +49,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.NonNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractSpigetClient implements SpigetClient {
 
@@ -91,8 +92,10 @@ public abstract class AbstractSpigetClient implements SpigetClient {
   }
 
   @Override
-  public @NonNull CompletableFuture<Void> sendRequestWithoutResponse(@NonNull Request<?> request,
-    @NonNull Object... uriParams) {
+  public @NonNull CompletableFuture<Void> sendRequestWithoutResponse(
+    @NonNull Request<?> request,
+    @NonNull Object... uriParams
+  ) {
     return this.sendRequestRaw(request, uriParams).thenAccept(stream -> {
       try {
         stream.close();
@@ -114,7 +117,7 @@ public abstract class AbstractSpigetClient implements SpigetClient {
 
   @NonNull
   protected abstract CompletableFuture<InputStream> doSendRequest(
-    String body,
+    @Nullable String body,
     @NonNull String uri,
     @NonNull String contentType,
     @NonNull String requestMethod);
