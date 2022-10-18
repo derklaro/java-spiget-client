@@ -63,7 +63,6 @@ import dev.derklaro.spiget.request.webhook.WebhookStatus;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletionException;
@@ -78,7 +77,7 @@ final class SpigetRequestTest {
 
   static Stream<Arguments> clients() {
     return Stream.of(
-      Arguments.of(new Java8SpigetClient(SpigetClientConfig.create(GsonMapper.INSTANCE).connectTimeout(Duration.ofSeconds(30)))),
+      Arguments.of(new Java8SpigetClient(SpigetClientConfig.create(GsonMapper.INSTANCE))),
       Arguments.of(new Java11SpigetClient(SpigetClientConfig.create(GsonMapper.INSTANCE))),
       Arguments.of(new Java11SpigetClient(SpigetClientConfig.create(JacksonMapper.INSTANCE))),
       Arguments.of(new HttpClient5SpigetClient(SpigetClientConfig.create(JacksonMapper.INSTANCE))));
