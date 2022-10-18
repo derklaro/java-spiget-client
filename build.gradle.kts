@@ -33,7 +33,7 @@ defaultTasks("build", "test", "jar")
 
 allprojects {
   group = "dev.derklaro.spiget"
-  version = "2.0.0-SNAPSHOT"
+  version = "2.0.0"
 
   repositories {
     mavenCentral()
