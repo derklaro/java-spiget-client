@@ -68,7 +68,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletionException;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -346,7 +345,6 @@ final class SpigetRequestTest {
 
   @ParameterizedTest
   @MethodSource("clients")
-  @Disabled("Deletion of hooks is now possible currently, we don't want to spam hooks")
   void testWebhook(SpigetClient client) {
     var url = String.format("https://%s.de", UUID.randomUUID().toString().replace("-", ""));
 
@@ -363,7 +361,7 @@ final class SpigetRequestTest {
     // delete
     DeleteWebhook.create(client).hookId(result.id()).secret(result.secret()).exec().join();
 
-    // should throw exception now, but it doesn't for some reason? Might be a bug on the spiget site
-    // Assertions.assertThrows(Exception.class, () -> client.webhookStatus().hookId(result.id()).exec().join());
+    // should throw exception now, but it doesn't for some reason? Might be that we're requesting right after deleting
+    // Assertions.assertThrows(Exception.class, () -> WebhookStatus.create(client).hookId(result.id()).exec().join());
   }
 }
