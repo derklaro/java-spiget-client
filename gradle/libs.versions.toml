@@ -15,7 +15,7 @@ gson = "2.10.1"
 jackson = "2.14.2"
 
 # http
-httpClient5 = "5.2"
+httpClient5 = "5.4"
 
 # testing
 junit = "5.9.1"
