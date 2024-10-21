@@ -18,7 +18,7 @@ jackson = "2.14.2"
 httpClient5 = "5.2"
 
 # testing
-junit = "5.9.1"
+junit = "5.11.3"
 
 
 [libraries]
